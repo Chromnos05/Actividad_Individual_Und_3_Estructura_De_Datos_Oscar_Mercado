@@ -3,12 +3,14 @@ package com.taller.servicio;
 import com.taller.modelo.EquipoReparacion;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 public class GestorTaller {
 
@@ -87,5 +89,90 @@ public class GestorTaller {
 
     public int cantidadTotal() {
         return registroGeneral.size();
+    }
+
+    public EquipoReparacion buscarPorCriterioAlternativo(String criterio) {
+        return registroGeneral.stream()
+                .filter(e -> e.getNombreCliente().equalsIgnoreCase(criterio))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<EquipoReparacion> filtrarPorEstado(String estado) {
+        return registroGeneral.stream()
+                .filter(e -> e.getEstado().equalsIgnoreCase(estado))
+                .toList();
+    }
+
+    public List<EquipoReparacion> filtrarPorTipo(String tipo) {
+        return registroGeneral.stream()
+                .filter(e -> e.getTipoEquipo().equalsIgnoreCase(tipo))
+                .toList();
+    }
+
+    public List<EquipoReparacion> ordenarPorCodigo() {
+        return registroGeneral.stream()
+                .sorted()
+                .toList();
+    }
+
+    public List<EquipoReparacion> ordenarPorNombreCliente() {
+        return registroGeneral.stream()
+                .sorted(Comparator.comparing(EquipoReparacion::getNombreCliente))
+                .toList();
+    }
+
+    public long contarPorEstado(String estado) {
+        return registroGeneral.stream()
+                .filter(e -> e.getEstado().equalsIgnoreCase(estado))
+                .count();
+    }
+
+    public List<String> obtenerCodigosRegistrados() {
+        return registroGeneral.stream()
+                .map(EquipoReparacion::getCodigoServicio)
+                .toList();
+    }
+
+    public boolean existeAlgunPendiente() {
+        return registroGeneral.stream()
+                .anyMatch(e -> "PENDIENTE".equals(e.getEstado()));
+    }
+
+    public boolean todosTienenCodigo() {
+        return registroGeneral.stream()
+                .allMatch(e -> e.getCodigoServicio() != null && !e.getCodigoServicio().isEmpty());
+    }
+
+    public boolean ningunoProcesado() {
+        return registroGeneral.stream()
+                .noneMatch(e -> "PROCESADO".equals(e.getEstado()));
+    }
+
+    public Map<String, List<EquipoReparacion>> agruparPorEstado() {
+        return registroGeneral.stream()
+                .collect(Collectors.groupingBy(EquipoReparacion::getEstado));
+    }
+
+    public Map<String, List<EquipoReparacion>> agruparPorTipo() {
+        return registroGeneral.stream()
+                .collect(Collectors.groupingBy(EquipoReparacion::getTipoEquipo));
+    }
+
+    public Map<String, Long> estadisticasPorEstado() {
+        return registroGeneral.stream()
+                .collect(Collectors.groupingBy(EquipoReparacion::getEstado, Collectors.counting()));
+    }
+
+    public Map<String, EquipoReparacion> construirMapaDesdeLista() {
+        return registroGeneral.stream()
+                .collect(Collectors.toMap(
+                        EquipoReparacion::getCodigoServicio,
+                        e -> e,
+                        (existente, nuevo) -> existente));
+    }
+
+    public void mostrarEquipos(List<EquipoReparacion> equipos) {
+        equipos.forEach(System.out::println);
     }
 }
