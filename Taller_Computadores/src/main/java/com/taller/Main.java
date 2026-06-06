@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Clase principal con menu interactivo de consola.
+ * Ofrece 15 opciones para gestionar el taller de computadores
+ * usando las colecciones del SDK y Stream.
+ */
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -21,6 +26,7 @@ public class Main {
         System.out.println("Saliendo del sistema...");
     }
 
+    /** Muestra las 15 opciones del menu principal. */
     private static void mostrarMenu() {
         System.out.println("\n========= TALLER DE COMPUTADORES =========");
         System.out.println("1.  Registrar equipo");
@@ -41,6 +47,7 @@ public class Main {
         System.out.print("Seleccione una opcion: ");
     }
 
+    /** Lee y parsea la opcion ingresada; retorna -1 si no es un numero. */
     private static int leerOpcion() {
         try {
             return Integer.parseInt(scanner.nextLine().trim());
@@ -49,6 +56,7 @@ public class Main {
         }
     }
 
+    /** Enruta la opcion al metodo correspondiente con try-catch general. */
     private static void ejecutarOpcion(int opcion) {
         try {
             switch (opcion) {
@@ -74,6 +82,9 @@ public class Main {
         }
     }
 
+    // -- Metodos de cada opcion del menu --
+
+    /** Opcion 1: Solicita datos al usuario y registra un nuevo equipo. */
     private static void registrarEquipo() {
         System.out.print("Codigo de servicio: ");
         String codigo = scanner.nextLine().trim();
@@ -91,6 +102,7 @@ public class Main {
         System.out.println("Equipo registrado exitosamente");
     }
 
+    /** Opcion 2: Muestra todos los equipos del registro general. */
     private static void verTodos() {
         List<EquipoReparacion> lista = gestor.obtenerTodos();
         if (lista.isEmpty()) {
@@ -100,6 +112,7 @@ public class Main {
         gestor.mostrarEquipos(lista);
     }
 
+    /** Opcion 3: Muestra solo los equipos en cola de pendientes. */
     private static void verPendientes() {
         List<EquipoReparacion> lista = gestor.obtenerPendientes();
         if (lista.isEmpty()) {
@@ -109,12 +122,14 @@ public class Main {
         gestor.mostrarEquipos(lista);
     }
 
+    /** Opcion 4: Procesa el primer equipo de la cola FIFO. */
     private static void procesarEquipo() {
         EquipoReparacion equipo = gestor.procesarSiguiente();
         System.out.println("Equipo procesado: " + equipo.getCodigoServicio()
                 + " - " + equipo.getNombreCliente());
     }
 
+    /** Opcion 5: Muestra el historial LIFO de equipos procesados. */
     private static void verHistorial() {
         List<EquipoReparacion> historial = gestor.obtenerHistorial();
         if (historial.isEmpty()) {
@@ -124,6 +139,7 @@ public class Main {
         gestor.mostrarEquipos(historial);
     }
 
+    /** Opcion 6: Busqueda directa por codigo usando el HashMap. */
     private static void buscarPorCodigo() {
         System.out.print("Ingrese el codigo de servicio: ");
         String codigo = scanner.nextLine().trim();
@@ -135,6 +151,7 @@ public class Main {
         }
     }
 
+    /** Opcion 7: Busqueda por nombre del cliente usando Stream filter+findFirst. */
     private static void buscarPorCriterio() {
         System.out.print("Ingrese el nombre del cliente: ");
         String nombre = scanner.nextLine().trim();
@@ -146,6 +163,7 @@ public class Main {
         }
     }
 
+    /** Opcion 8: Filtra equipos por estado usando Stream filter+toList. */
     private static void filtrarPorEstado() {
         System.out.print("Ingrese el estado (PENDIENTE/PROCESADO/CANCELADO): ");
         String estado = scanner.nextLine().trim().toUpperCase();
@@ -157,6 +175,7 @@ public class Main {
         }
     }
 
+    /** Opcion 9: Submenu para ordenar por codigo o por nombre del cliente. */
     private static void ordenarEquipos() {
         System.out.println("1. Ordenar por codigo");
         System.out.println("2. Ordenar por nombre del cliente");
@@ -178,6 +197,7 @@ public class Main {
         }
     }
 
+    /** Opcion 10: Muestra estadisticas, conteos y banderas usando Stream. */
     private static void verEstadisticas() {
         System.out.println("--- Estadisticas por estado ---");
         Map<String, Long> stats = gestor.estadisticasPorEstado();
@@ -196,6 +216,7 @@ public class Main {
                 + (gestor.ningunoProcesado() ? "Si" : "No"));
     }
 
+    /** Opcion 11: Muestra agrupamientos por estado y por tipo (Stream). */
     private static void verAgrupamientos() {
         System.out.println("--- Agrupamiento por estado ---");
         Map<String, List<EquipoReparacion>> porEstado = gestor.agruparPorEstado();
@@ -212,6 +233,7 @@ public class Main {
         });
     }
 
+    /** Opcion 12: Cancela un equipo pendiente por su codigo. */
     private static void cancelarEquipo() {
         System.out.print("Ingrese el codigo del equipo a cancelar: ");
         String codigo = scanner.nextLine().trim();
@@ -219,12 +241,14 @@ public class Main {
         System.out.println("Equipo " + codigo + " cancelado exitosamente");
     }
 
+    /** Opcion 13: Deshace el ultimo procesamiento (LIFO). */
     private static void deshacerProcesamiento() {
         EquipoReparacion equipo = gestor.deshacer();
         System.out.println("Procesamiento deshecho. Equipo " + equipo.getCodigoServicio()
                 + " vuelve a estado PENDIENTE");
     }
 
+    /** Opcion 14: Muestra la cantidad total de equipos registrados. */
     private static void verCantidad() {
         System.out.println("Total de equipos registrados: " + gestor.cantidadTotal());
     }
