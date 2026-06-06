@@ -2,7 +2,7 @@ package com.taller.modelo;
 
 import java.util.Objects;
 
-public class EquipoReparacion {
+public class EquipoReparacion implements Comparable<EquipoReparacion> {
 
     private String codigoServicio;
     private String nombreCliente;
@@ -93,5 +93,10 @@ public class EquipoReparacion {
     @Override
     public int hashCode() {
         return Objects.hashCode(codigoServicio);
+    }
+
+    @Override
+    public int compareTo(EquipoReparacion otro) {
+        return this.codigoServicio.compareTo(otro.codigoServicio);
     }
 }
